@@ -1,0 +1,40 @@
+4. Banker's Algorithm
+#include <stdio.h>
+#define N 5
+#define M 3
+int available[M] = {3, 3, 2};
+int max[N][M] = {{7, 5, 3}, {3, 2, 2}, {9, 0, 2}, {2, 2, 2}, {4, 3, 3}};
+int allocation[N][M] = {{0, 1, 0}, {2, 0, 0}, {3, 0, 2}, {2, 1, 1}, {0, 0, 2}};
+int main() {
+    int work[M], finish[N] = {0}, need[N][M], safeSeq[N], safe = 0;
+    for (int i = 0; i < N; i++)
+        for (int j = 0; j < M; j++)
+            need[i][j] = max[i][j] - allocation[i][j];
+    for (int i = 0; i < M; i++) work[i] = available[i];
+    while (safe < N) {
+        int found = 0;
+        for (int i = 0; i < N; i++) {
+            if (!finish[i]) {
+                int j;
+                for (j = 0; j < M && need[i][j] <= work[j]; j++);
+                if (j == M) {
+                    for (int k = 0; k < M; k++) work[k] += allocation[i][k];
+                    safeSeq[safe++] = i;
+                    finish[i] = 1;
+                    found = 1;
+                }
+            }
+        }
+        if (!found) break;
+    }
+    if (safe == N) {
+        printf("System is safe\nSafe Sequence: ");
+        for (int i = 0; i < N; i++) printf("P%d ", safeSeq[i]);
+    } else {
+        printf("System is unsafe\n");
+    }
+    return 0;
+}
+Output:
+System is safe
+Safe Sequence: P1 P3 P4 P0 P2
